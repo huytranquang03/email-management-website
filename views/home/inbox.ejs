@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Email Inbox</title>
+		<style>
+			body {
+				font-family: "Arial", sans-serif;
+				margin: 0;
+				padding: 0;
+				background-color: #f1f1f1;
+			}
+
+			.content {
+				margin-left: 240px;
+				padding: 20px;
+			}
+
+			h1 {
+				background-color: #4285f4;
+				color: #fff;
+				padding: 20px;
+				margin: 0;
+			}
+
+			ul {
+				list-style-type: none;
+				padding: 0;
+			}
+
+			li {
+				background-color: #fff;
+				border: 1px solid #ddd;
+				margin: 10px 0;
+				padding: 10px 15px;
+				border-radius: 5px;
+				box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+				display: flex;
+				align-items: center; 
+				justify-content: space-between; 
+			}
+
+			li .checkbox-container {
+				margin-right: 20px;
+			}
+
+			li .email-details {
+				flex-grow: 1; 
+			}
+
+			.email-subject {
+				color: black;
+				font-weight: bold;
+				margin-right: 10px;
+				text-decoration: none;
+			}
+
+			.email-sender {
+				font-size: 16px;
+				text-decoration: none;
+				margin-right: 10px;
+				font-weight: bold;
+				color: black;
+			}
+
+			.email-sender:hover {
+				text-decoration: underline; 
+			}
+
+			.email-time {
+				color: #888;
+				font-size: 14px;
+			}
+
+			.delete-button {
+				margin-top: 20px;
+			}
+
+			.active {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<%- include ("../_partial/_header.ejs"); %> <%- include
+		("../_partial/_sidebar.ejs"); %>
+
+		<div class="content">
+			<h1>Email Inbox</h1>
+
+			<form id="deleteForm">
+				<ul>
+					<% emails.slice((currentPage - 1) * emailsPerPage, currentPage *
+					emailsPerPage).forEach(email => { %>
+					<li>
+						<div class="checkbox-container">
+							<input
+								type="checkbox"
+								class="email-checkbox"
+								value="<%= email.email_id %>"
+							/>
+						</div>
+						<div class="email-details">
+							<a
+								href="/auth/detail?id=<%= email.email_id %>"
+								class="email-sender"
+							>
+								<%= email.sender_name %>
+							</a>
+							<a
+								href="/auth/detail?id=<%= email.email_id %>"
+								class="email-subject"
+							>
+								<%= email.subject %>
+							</a>
+						</div>
+						<div class="email-time">
+							<small><%= email.formatted_sent_at %></small>
+						</div>
+					</li>
+					<% }) %>
+				</ul>
+				<button type="button" id="deleteSelected" class="delete-button">
+					Delete Selected
+				</button>
+			</form>
+
+			<% if (numPages > 1) { %>
+			<div>
+				<% for (let i = 1; i <= numPages; i++) { %>
+				<a
+					href="/auth/inbox?page=<%= i %>"
+					class="<%= i === currentPage ? 'active' : '' %>"
+				>
+					<%= i %>
+				</a>
+				<% } %>
+			</div>
+			<% } %>
+		</div>
+
+		<script>
+			document
+				.getElementById("deleteSelected")
+				.addEventListener("click", function () {
+					const checkboxes = document.querySelectorAll(
+						".email-checkbox:checked"
+					);
+					const emailIds = Array.from(checkboxes).map(
+						(checkbox) => checkbox.value
+					);
+
+					if (emailIds.length === 0) {
+						alert("Please select at least one email to delete.");
+						return;
+					}
+
+					fetch("/auth/delete-emails", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ emailIds: emailIds }),
+					})
+						.then((response) => {
+							if (!response.ok) {
+								throw new Error("Network response was not ok");
+							}
+							return response.json();
+						})
+						.then((data) => {
+							alert(data.message);
+							emailIds.forEach((id) => {
+								const emailItem = document
+									.querySelector(`.email-checkbox[value="${id}"]`)
+									.closest("li");
+								emailItem.remove();
+							});
+						})
+						.catch((error) => {
+							console.error(
+								"There was a problem with the fetch operation:",
+								error
+							);
+						});
+				});
+		</script>
+	</body>
+</html>
