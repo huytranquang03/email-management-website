@@ -1,27 +1,7 @@
 
 # 📧 Email Management System
 
-A simple web-based email system built with Node.js and EJS, developed for the **61FIT3WPR - Web Programming (Fall 2024)** course.
-
----
-
-## 👨‍🎓 Student Information
-
-- **Full Name:** Tran Quang Huy
-- **Student ID:** 2101040103
-- **Course:** 61FIT3WPR - Web Programming (Fall 2024)
-
----
-
-## ⚙️ System Requirements
-
-- **Node.js:** Version 18 or higher
-- **MySQL:** Database connection details
-    - Host: `localhost`
-    - Port: `3306`
-    - Username: `wpr`
-    - Password: `fit2024`
-    - Database Name: `wpr2101040103`
+A simple web-based email system built with Node.js and EJS, developed for the **61FIT3WPR - Web Programming** course.
 
 ---
 
@@ -93,20 +73,6 @@ Follow these steps to get the project up and running:
 
 ---
 
-## 🌐 Environment Variables
-
-You need to create a `.env` file in the project root with the following content:
-
-```
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=wpr
-DB_PASS=fit2024
-DB_NAME=wpr2101040103
-PORT=8000
-```
-
----
 
 ## 📜 License
 
